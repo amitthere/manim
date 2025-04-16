@@ -106,7 +106,7 @@ class AppConfigDemoScene(Scene):
         # Loop through each square in the app instances grid
         for square in app_squares:
             # Starting point for the arrow (center of the current square)
-            start_point = square.get_center()
+            start_point = square.get_right()
 
             # Create an arrow Mobject. Start it small at the start_point.
             # We use a tiny initial vector (RIGHT*0.01) just to give the arrow initial direction.
@@ -120,12 +120,16 @@ class AppConfigDemoScene(Scene):
             )
             arrow.scale(0.8)  # Make arrows slightly smaller
 
+            # Create a pentagon (RegularPolygon with n=5)
+            pentagon = RegularPolygon(n=5, color=TEAL, fill_opacity=0.7, fill_color=TEAL, radius=0.40)
+            pentagon.move_to(square.get_center())  # Align pentagon with square
+
             # Define the animation sequence for one arrow's round trip
             # Note: Total run_time is 1.0 second, matching the 1-second initiation interval.
             # If 8ms was intended, change run_time=0.008, but it won't be visible.
             anim_sequence = Succession(
                 # 1. Create the arrow at the start point
-                Create(arrow, run_time=0.1),
+                Create(arrow, run_time=0.008),
                 # 2. Animate the arrow tip moving to the target point
                 #    put_start_and_end_on ensures the arrow tail follows correctly
                 arrow.animate.put_start_and_end_on(start_point, target_point),
@@ -135,6 +139,8 @@ class AppConfigDemoScene(Scene):
                 arrow.animate.put_start_and_end_on(target_point, start_point),
                 # 5. Fade out the arrow once it returns
                 FadeOut(arrow, run_time=0.1),
+                # 6. Transform rectangle into pentagon
+                ReplacementTransform(square, pentagon),
                 # Total duration for the entire sequence for one arrow
                 run_time=1.0
             )
