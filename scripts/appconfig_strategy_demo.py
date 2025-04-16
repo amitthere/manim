@@ -12,12 +12,8 @@ class AppConfigDemoScene(Scene):
 
         # 2. Table with Properties
         table_data = [
-            # ["Property", "Value"],
-            ["Application Polling Interval", "1 second"],
-            ["Deployment Duration", "20 second"],
-            ["Bake Time", "5 second"],
-            ["Growth Factor", "20%"],
-            ["Growth Type", "LINEAR"]
+            ["Application Polling Interval","Deployment Duration","Bake Time","Growth Factor","Growth Type"],
+            [ "1 second", "20 second","5 second", "20%", "LINEAR"]
         ]
         # Create the table object
         properties_table = Table(
@@ -27,13 +23,13 @@ class AppConfigDemoScene(Scene):
             h_buff=0.5, # Horizontal buffer in cells
             v_buff=0.3,  # Vertical buffer in cells
             arrange_in_grid_config={"cell_alignment": LEFT}
-        ).scale(0.40) # Scale down the table to fit
+        ).scale(0.45) # Scale down the table to fit
         # Position the table below the title
         properties_table.next_to(title, DOWN, buff=0.4)
 
         # 3. Application Instances (Grid of Squares)
         # Create 12 squares
-        app_squares = VGroup(*[Square(side_length=0.7, stroke_color=WHITE, stroke_width=2) for _ in range(12)])
+        app_squares = VGroup(*[Square(side_length=0.7, stroke_color=WHITE, stroke_width=2, fill_color=ORANGE, fill_opacity=0.7) for _ in range(12)])
         # Arrange them in a 3x4 grid
         app_squares.arrange_in_grid(rows=3, cols=4, buff=0.25)
 
