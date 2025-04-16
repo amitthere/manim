@@ -12,7 +12,7 @@ class AppConfigDemoScene(Scene):
 
         # 2. Table with Properties
         table_data = [
-            ["Property", "Value"],
+            # ["Property", "Value"],
             ["Application Polling Interval", "1 second"],
             ["Deployment Duration", "20 second"],
             ["Bake Time", "5 second"],
@@ -27,7 +27,7 @@ class AppConfigDemoScene(Scene):
             h_buff=0.5, # Horizontal buffer in cells
             v_buff=0.3,  # Vertical buffer in cells
             arrange_in_grid_config={"cell_alignment": LEFT}
-        ).scale(0.45) # Scale down the table to fit
+        ).scale(0.40) # Scale down the table to fit
         # Position the table below the title
         properties_table.next_to(title, DOWN, buff=0.4)
 
@@ -38,7 +38,7 @@ class AppConfigDemoScene(Scene):
         app_squares.arrange_in_grid(rows=3, cols=4, buff=0.25)
 
         # Label for the instances
-        app_instances_label = Text("App Instances").scale(0.6)
+        app_instances_label = Text("Application Instances").scale(0.6)
 
         # Group squares and label
         app_instances_group = VGroup(app_squares, app_instances_label)
@@ -95,3 +95,6 @@ class AppConfigDemoScene(Scene):
         self.play(Create(time_bar_group))
 
         self.wait(3) # Hold the final scene for a few seconds
+
+# if __name__ == '__main__':
+#     main()
