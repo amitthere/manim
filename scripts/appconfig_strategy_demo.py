@@ -46,11 +46,16 @@ class AppConfigDemoScene(Scene):
 
 
         # 4. AppConfig Service Box
+        img = ImageMobject("AWS-AppConfig_64.png")
         # Create the rectangle
-        appconfig_box = Rectangle(height=3, width=2, color=BLUE, stroke_width=2)
+        appconfig_box = Rectangle(height=3, width=2, color=BLUE, stroke_width=2) #, fill_color="#FA4A87", fill_opacity=1)
+        img.set_height(appconfig_box.height * 0.9)  # Slightly smaller than rectangle height
+        img.set_width(appconfig_box.width * 0.9)  # Slightly smaller than rectangle width
+        img.move_to(appconfig_box.get_center())
+
         # Create the label inside the box
-        appconfig_label = Text("AppConfig\nService", line_spacing=0.8).scale(0.5)
-        appconfig_label.move_to(appconfig_box.get_center()) # Center label in box
+        appconfig_label = Text("AppConfig Service", line_spacing=0.8).scale(0.5)
+        appconfig_label.next_to(appconfig_box, DOWN, buff=0.3) # label below the box
 
         # Group box and label
         appconfig_service = VGroup(appconfig_box, appconfig_label)
@@ -88,9 +93,56 @@ class AppConfigDemoScene(Scene):
                 lag_ratio=0.5 # Start AppConfig service creation slightly after instances
             )
         )
+        img.move_to(appconfig_box.get_center())
+        self.add(img)
         self.play(Create(time_bar_group))
 
-        self.wait(3) # Hold the final scene for a few seconds
+        self.wait(0.5)  # Short pause before animations start
 
-# if __name__ == '__main__':
-#     main()
+        # --- Arrow Animation Loop ---
+        # Target point for arrows (left edge of the AppConfig box is visually better)
+        target_point = appconfig_box.get_critical_point(LEFT)
+
+        # Loop through each square in the app instances grid
+        for square in app_squares:
+            # Starting point for the arrow (center of the current square)
+            start_point = square.get_center()
+
+            # Create an arrow Mobject. Start it small at the start_point.
+            # We use a tiny initial vector (RIGHT*0.01) just to give the arrow initial direction.
+            arrow = Arrow(
+                start_point, start_point + RIGHT * 0.01,  # Initial small arrow at start
+                buff=0.1,  # Buffer space at start/end
+                color=YELLOW,
+                stroke_width=4,
+                max_tip_length_to_length_ratio=0.2,  # Control tip size relative to length
+                max_stroke_width_to_length_ratio=5  # Control stroke width relative to length
+            )
+            arrow.scale(0.8)  # Make arrows slightly smaller
+
+            # Define the animation sequence for one arrow's round trip
+            # Note: Total run_time is 1.0 second, matching the 1-second initiation interval.
+            # If 8ms was intended, change run_time=0.008, but it won't be visible.
+            anim_sequence = Succession(
+                # 1. Create the arrow at the start point
+                Create(arrow, run_time=0.1),
+                # 2. Animate the arrow tip moving to the target point
+                #    put_start_and_end_on ensures the arrow tail follows correctly
+                arrow.animate.put_start_and_end_on(start_point, target_point),
+                # 3. Brief pause at the target
+                Wait(0.1),
+                # 4. Animate the arrow tip moving back to the start point
+                arrow.animate.put_start_and_end_on(target_point, start_point),
+                # 5. Fade out the arrow once it returns
+                FadeOut(arrow, run_time=0.1),
+                # Total duration for the entire sequence for one arrow
+                run_time=1.0
+            )
+
+            # Play the animation sequence for the current arrow
+            # Since each play call waits for the previous one, and run_time is 1s,
+            # a new arrow animation starts every second.
+            self.play(anim_sequence)
+
+        # Hold the final state for a bit longer after animations finish
+        self.wait(2)
